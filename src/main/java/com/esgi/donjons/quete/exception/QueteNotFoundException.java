@@ -1,4 +1,4 @@
-package exception;
+package com.esgi.donjons.quete.exception;
 
 import java.util.UUID;
 

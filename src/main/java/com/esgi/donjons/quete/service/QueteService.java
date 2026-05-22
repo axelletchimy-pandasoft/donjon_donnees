@@ -1,4 +1,4 @@
-package service;
+package com.esgi.donjons.quete.service;
 
 import dto.QueteCreateDTO;
 import dto.QueteResponseDTO;

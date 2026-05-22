@@ -1,4 +1,4 @@
-package dto;
+package com.esgi.donjons.quete.dto;
 
 /**
  * DTO utilisé pour la création d'une nouvelle quête.

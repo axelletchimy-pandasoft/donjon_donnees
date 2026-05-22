@@ -1,4 +1,4 @@
-package dao;
+package com.esgi.donjons.quete.dao;
 
 import model.Quete;
 

@@ -1,4 +1,4 @@
-package seeder;
+package com.esgi.donjons.quete.seeder;
 
 import dao.QueteDAO;
 import model.Quete;

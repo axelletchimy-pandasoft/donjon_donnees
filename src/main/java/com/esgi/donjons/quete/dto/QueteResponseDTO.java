@@ -1,4 +1,4 @@
-package dto;
+package com.esgi.donjons.quete.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
