@@ -61,9 +61,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
                 aventurierId, queteId, succes, butinOr, xpGagne, dureeSecondes);
         Expedition saved = expeditionDAO.save(expedition);
 
-        if (succes) {
-            aventurierService.recompenser(aventurierId, xpGagne, butinOr);
-        }
+        aventurierService.recompenser(aventurierId, xpGagne, butinOr);
 
         return expeditionDAO.findById(saved.getId())
                 .orElseThrow(() -> new ExpeditionNotFoundException(saved.getId()));
