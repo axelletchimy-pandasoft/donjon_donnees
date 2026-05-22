@@ -1,0 +1,28 @@
+# =====================================================================
+#  Donjons & Données — base PostgreSQL locale (zéro réseau ESGI)
+#  Lancer DEPUIS ce dossier :   docker compose up -d
+#  Le script init.sql (à côté) est exécuté automatiquement à la 1re
+#  création du volume (dossier /docker-entrypoint-initdb.d/).
+# =====================================================================
+services:
+  db:
+    image: postgres:16
+    container_name: donjons-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: donjons
+      POSTGRES_PASSWORD: donjons
+      POSTGRES_DB: guilde
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - donjons_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U donjons -d guilde"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  donjons_data:

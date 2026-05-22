@@ -1,0 +1,88 @@
+# =====================================================================
+#  Intégration Continue — Donjons & Données   (À COMPLÉTER PAR LE DEVOPS)
+# ---------------------------------------------------------------------
+#  Objectif : à chaque push et chaque pull request, la CI doit
+#    1) récupérer le code, 2) installer le JDK 21,
+#    3) démarrer une base PostgreSQL de test et y appliquer le schéma,
+#    4) compiler le projet, 5) lancer les tests.
+#
+#  La structure est posée. Remplacez chaque  # TODO  par la bonne ligne.
+#  Indices entre crochets [ ... ]. Bonne chasse !
+# =====================================================================
+name: CI
+
+# --- 1. Déclencheurs ---------------------------------------------------
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # --- 2. Base PostgreSQL éphémère (service container) ---------------
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: donjons
+          POSTGRES_PASSWORD: donjons
+          POSTGRES_DB: guilde
+        ports:
+          - 5432:5432
+        # health-check : attend que la base soit prête avant les étapes
+        options: >-
+          --health-cmd="pg_isready -U donjons -d guilde"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    # --- 3. Variables d'environnement lues par DatabaseConnection ------
+    #     (rappel : AUCUN secret en dur dans le code Java)
+    env:
+      DB_URL: jdbc:postgresql://localhost:5432/guilde
+      DB_USER: donjons
+      DB_PASSWORD: donjons
+
+    steps:
+      # --- 4. Récupérer le code du dépôt -----------------------------
+      - name: Checkout
+        # TODO : remplacer la ligne `run` ci-dessous par l'action de checkout
+        #        [ uses: actions/checkout@v4 ]
+        run: echo "TODO - checkout du code (actions/checkout@v4)"
+
+      # --- 5. Installer le JDK 21 ------------------------------------
+      - name: Set up JDK 21
+        # TODO : remplacer la ligne `run` ci-dessous par actions/setup-java@v4
+        #        avec : distribution: temurin | java-version: '21' | cache: maven
+        run: echo "TODO - installer le JDK 21 (actions/setup-java@v4)"
+
+      # --- 6. Appliquer le schéma à la base de test ------------------
+      - name: Apply database schema
+        env:
+          PGPASSWORD: donjons
+        # TODO : exécuter le script de création des tables avec psql
+        #        [ psql -h localhost -U donjons -d guilde -f resources/init.sql ]
+        run: echo "TODO - appliquer resources/init.sql avec psql"
+
+      # --- 7. Compiler le projet -------------------------------------
+      - name: Build
+        # TODO : compiler avec Maven
+        #        [ mvn -B clean compile ]
+        run: echo "TODO - compiler le projet"
+
+      # --- 8. Lancer les tests ---------------------------------------
+      - name: Tests
+        # TODO : lancer les tests avec Maven
+        #        [ mvn -B test ]
+        run: echo "TODO - lancer les tests"
+
+# =====================================================================
+#  Pour aller plus loin (bonnes pratiques attendues) :
+#   - Protéger la branche main : Settings > Branches > Add rule
+#       -> "Require status checks to pass" (cette CI) + "Require a pull
+#          request before merging".
+#   - Une PR ne se fusionne que si la CI est verte ET relue (Tech Lead).
+# =====================================================================
