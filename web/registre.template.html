@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Grand Registre de la Guilde — Donjons &amp; Données</title>
+<style>
+  :root{
+    --bg:#0f1117; --bg2:#151a26; --panel:#1b2233; --panel2:#222b40;
+    --gold:#e8b84b; --gold2:#d9a441; --ink:#e8ebf2; --muted:#97a1b4; --line:#2b3349;
+    --ok:#3fb950; --ko:#e5534b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,Arial,sans-serif;background:
+       radial-gradient(1200px 600px at 80% -10%, #1d2740 0%, transparent 60%), var(--bg);
+       color:var(--ink);min-height:100vh}
+  .wrap{max-width:1120px;margin:0 auto;padding:28px 20px 60px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
+         border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px}
+  h1{margin:0;font-size:30px;letter-spacing:.3px}
+  h1 .crest{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14px;margin-top:6px}
+  .stamp{color:var(--muted);font-size:12px;text-align:right}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+  .stat{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+        border-radius:14px;padding:16px 18px}
+  .stat .v{font-size:28px;font-weight:700;color:var(--gold)}
+  .stat .l{color:var(--muted);font-size:13px;margin-top:2px}
+  section{margin-bottom:32px}
+  h2{font-size:18px;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+  h2:before{content:"";width:8px;height:18px;background:var(--gold);border-radius:3px;display:inline-block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--panel2)}
+  .rang{font-weight:700;color:var(--muted);width:46px}
+  .rang.top1{color:#ffd24a}.rang.top2{color:#cfd6e4}.rang.top3{color:#e0925a}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600}
+  .xpbar{height:7px;background:var(--bg2);border-radius:999px;overflow:hidden;min-width:90px}
+  .xpbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+  .or{color:var(--gold);font-weight:600;white-space:nowrap}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .quete{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .quete .t{font-weight:600;margin-bottom:8px}
+  .quete .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px}
+  .exped{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .exped:last-child{border-bottom:none}
+  .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;flex:0 0 auto}
+  .dot.ok{background:rgba(63,185,80,.16);color:var(--ok)}
+  .dot.ko{background:rgba(229,83,75,.16);color:var(--ko)}
+  .exped .who{font-weight:600}.exped .arrow{color:var(--muted)}
+  .exped .gain{margin-left:auto;color:var(--gold);font-weight:600;white-space:nowrap}
+  .search{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:9px;
+          padding:8px 12px;font-size:14px;width:230px}
+  footer{color:var(--muted);font-size:12px;text-align:center;margin-top:30px}
+  @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Le Grand Registre de la <span class="crest">Guilde</span></h1>
+      <div class="sub">Donjons &amp; Données — tableau de bord de la guilde d'aventuriers</div>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <section>
+    <h2>Classement des aventuriers</h2>
+    <div style="margin-bottom:12px"><input class="search" id="search" placeholder="Filtrer par pseudo…"></div>
+    <div class="card"><table>
+      <thead><tr><th>#</th><th>Pseudo</th><th>Classe</th><th>Niveau</th><th>Expérience</th><th>Or</th></tr></thead>
+      <tbody id="classement"></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Quêtes actives</h2>
+    <div class="grid" id="quetes"></div>
+  </section>
+
+  <section>
+    <h2>Dernières expéditions</h2>
+    <div class="card" id="expeditions"></div>
+  </section>
+
+  <footer>Page statique générée depuis la base — relancer l'exporteur Java pour rafraîchir.</footer>
+</div>
+
+<script>
+  const GUILD_DATA = __GUILD_DATA__;
+
+  const CLASSE_COL = {GUERRIER:"#c97b5a",MAGE:"#6aa8ff",VOLEUR:"#9b8cff",ARCHER:"#54b98a",PALADIN:"#e8b84b",BARDE:"#e07ab0"};
+  const DIFF_COL = {FACILE:"#3fb950",NORMALE:"#6aa8ff",DIFFICILE:"#e0925a",CAUCHEMAR:"#e5534b",LEGENDAIRE:"#b07ae0"};
+  const tint = c => "color:"+c+";background:"+c+"22;border:1px solid "+c+"55";
+  const esc = s => String(s==null?"":s).replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));
+  const nf = n => (n==null?0:n).toLocaleString("fr-FR");
+
+  function renderStats(){
+    const s = GUILD_DATA.stats||{};
+    const items=[["Aventuriers",s.aventuriers],["Quêtes actives",s.quetesActives],
+                 ["Expéditions",s.expeditions],["Or distribué",s.orDistribue]];
+    document.getElementById("stats").innerHTML = items.map(([l,v])=>
+      `<div class="stat"><div class="v">${nf(v)}</div><div class="l">${l}</div></div>`).join("");
+  }
+  function renderClassement(filter){
+    const f=(filter||"").toLowerCase();
+    const rows=(GUILD_DATA.classement||[]).filter(a=>a.pseudo.toLowerCase().includes(f));
+    const maxXp=Math.max(1,...(GUILD_DATA.classement||[]).map(a=>a.xp||0));
+    document.getElementById("classement").innerHTML = rows.map((a,i)=>{
+      const rang=a.rang||i+1, cls=rang<=3?` top${rang}`:"";
+      const c=CLASSE_COL[a.classe]||"#9aa3b2";
+      return `<tr>
+        <td class="rang${cls}">${rang}</td>
+        <td>${esc(a.pseudo)}</td>
+        <td><span class="badge" style="${tint(c)}">${esc(a.classe)}</span></td>
+        <td>${a.niveau}</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+            <div class="xpbar"><i style="width:${Math.round((a.xp||0)/maxXp*100)}%"></i></div>
+            <span style="color:var(--muted);font-size:12px">${nf(a.xp)}</span></div></td>
+        <td class="or">${nf(a.or)}</td></tr>`;
+    }).join("") || `<tr><td colspan="6" style="color:var(--muted)">Aucun aventurier.</td></tr>`;
+  }
+  function renderQuetes(){
+    document.getElementById("quetes").innerHTML = (GUILD_DATA.quetes||[]).map(q=>{
+      const d=DIFF_COL[q.difficulte]||"#9aa3b2";
+      return `<div class="quete"><div class="t">${esc(q.titre)}</div>
+        <div class="meta">
+          <span class="badge" style="${tint(d)}">${esc(q.difficulte)}</span>
+          <span class="badge" style="${tint("#7f8aa3")}">${esc(q.biome)}</span>
+          <span style="margin-left:auto" class="or">${nf(q.recompenseXp)} XP · ${nf(q.recompenseOr)} or</span>
+        </div></div>`;
+    }).join("") || `<div style="color:var(--muted)">Aucune quête active.</div>`;
+  }
+  function renderExpeditions(){
+    document.getElementById("expeditions").innerHTML = (GUILD_DATA.expeditions||[]).map(e=>
+      `<div class="exped">
+        <div class="dot ${e.succes?'ok':'ko'}">${e.succes?'✓':'✗'}</div>
+        <span class="who">${esc(e.aventurierPseudo)}</span>
+        <span class="arrow">→</span><span>${esc(e.queteTitre)}</span>
+        <span class="gain">+${nf(e.butinOr)} or · +${nf(e.xpGagne)} XP</span>
+      </div>`).join("") || `<div class="exped" style="color:var(--muted)">Aucune expédition.</div>`;
+  }
+  document.getElementById("stamp").textContent = "Généré le " + (GUILD_DATA.genereLe||"—");
+  document.getElementById("search").addEventListener("input", e=>renderClassement(e.target.value));
+  renderStats(); renderClassement(""); renderQuetes(); renderExpeditions();
+</script>
+</body>
+</html>
