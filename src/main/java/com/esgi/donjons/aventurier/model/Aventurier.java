@@ -21,8 +21,12 @@ public record Aventurier(
         if (pseudo == null || pseudo.isBlank()) {
             throw new IllegalArgumentException("Le pseudo est obligatoire");
         }
+        pseudo = pseudo.trim();
         if (pseudo.length() < 3 || pseudo.length() > 20) {
             throw new IllegalArgumentException("Le pseudo doit contenir entre 3 et 20 caracteres");
+        }
+        if (!pseudo.matches("[A-Za-z0-9]+")) {
+            throw new IllegalArgumentException("Le pseudo doit etre alphanumerique");
         }
         if (niveau < 1) {
             throw new IllegalArgumentException("Le niveau doit etre superieur ou egal a 1");
