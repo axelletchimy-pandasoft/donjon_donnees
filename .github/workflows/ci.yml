@@ -47,10 +47,14 @@ jobs:
     steps:
       # --- 4. Récupérer le code du dépôt -----------------------------
       - name: Checkout
+        # TODO : remplacer la ligne `run` ci-dessous par l'action de checkout
+        #        [ uses: actions/checkout@v4 ]
         uses: actions/checkout@v4
 
       # --- 5. Installer le JDK 21 ------------------------------------
       - name: Set up JDK 21
+        # TODO : remplacer la ligne `run` ci-dessous par actions/setup-java@v4
+        #        avec : distribution: temurin | java-version: '21' | cache: maven
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -61,14 +65,20 @@ jobs:
       - name: Apply database schema
         env:
           PGPASSWORD: donjons
+        # TODO : exécuter le script de création des tables avec psql
+        #        [ psql -h localhost -U donjons -d guilde -f resources/init.sql ]
         run: psql -h localhost -U donjons -d guilde -f resources/init.sql
 
       # --- 7. Compiler le projet -------------------------------------
       - name: Build
+        # TODO : compiler avec Maven
+        #        [ mvn -B clean compile ]
         run: mvn -B clean compile
 
       # --- 8. Lancer les tests ---------------------------------------
       - name: Tests
+        # TODO : lancer les tests avec Maven
+        #        [ mvn -B test ]
         run: mvn -B test
 
 # =====================================================================
