@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.esgi</groupId>
@@ -11,45 +12,69 @@
   <packaging>jar</packaging>
 
   <properties>
+    <!-- Java -->
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Versions -->
     <junit.version>5.10.2</junit.version>
+    <postgresql.version>42.7.3</postgresql.version>
+    <surefire.version>3.2.5</surefire.version>
+    <exec.plugin.version>3.2.0</exec.plugin.version>
   </properties>
 
   <dependencies>
-    <!-- Driver PostgreSQL (chargé au runtime ; votre code n'importe que java.sql.*) -->
+
+    <!-- PostgreSQL -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.7.3</version>
+      <version>${postgresql.version}</version>
     </dependency>
 
-    <!-- JUnit 5 — pour vos tests -->
+    <!-- JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+
+      <!-- Compilation Java -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+
+      <!-- Exécution des tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>${surefire.version}</version>
       </plugin>
-      <!-- Permet : mvn exec:java   (une fois votre classe Main créée) -->
+
+      <!-- Exécution de la classe Main -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>${exec.plugin.version}</version>
         <configuration>
           <mainClass>com.esgi.donjons.Main</mainClass>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
+
 </project>
