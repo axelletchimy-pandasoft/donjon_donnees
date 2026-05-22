@@ -23,10 +23,17 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     public ExpeditionServiceImpl(ExpeditionDAO expeditionDAO,
                                  AventurierService aventurierService,
                                  QueteService queteService) {
+        this(expeditionDAO, aventurierService, queteService, new Random());
+    }
+
+    ExpeditionServiceImpl(ExpeditionDAO expeditionDAO,
+                          AventurierService aventurierService,
+                          QueteService queteService,
+                          Random random) {
         this.expeditionDAO = expeditionDAO;
         this.aventurierService = aventurierService;
         this.queteService = queteService;
-        this.random = new Random();
+        this.random = random;
     }
 
     @Override
