@@ -3,6 +3,9 @@ target/
 *.iml
 .idea/
 .vscode/
+.classpath
+.project
+.settings/
 .env
 *.log
 .DS_Store
