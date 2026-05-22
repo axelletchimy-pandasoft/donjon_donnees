@@ -14,9 +14,7 @@ name: CI
 # --- 1. Déclencheurs ---------------------------------------------------
 on:
   push:
-    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
 
 jobs:
   build-and-test:
@@ -49,35 +47,29 @@ jobs:
     steps:
       # --- 4. Récupérer le code du dépôt -----------------------------
       - name: Checkout
-        # TODO : remplacer la ligne `run` ci-dessous par l'action de checkout
-        #        [ uses: actions/checkout@v4 ]
-        run: echo "TODO - checkout du code (actions/checkout@v4)"
+        uses: actions/checkout@v4
 
       # --- 5. Installer le JDK 21 ------------------------------------
       - name: Set up JDK 21
-        # TODO : remplacer la ligne `run` ci-dessous par actions/setup-java@v4
-        #        avec : distribution: temurin | java-version: '21' | cache: maven
-        run: echo "TODO - installer le JDK 21 (actions/setup-java@v4)"
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
 
       # --- 6. Appliquer le schéma à la base de test ------------------
       - name: Apply database schema
         env:
           PGPASSWORD: donjons
-        # TODO : exécuter le script de création des tables avec psql
-        #        [ psql -h localhost -U donjons -d guilde -f resources/init.sql ]
-        run: echo "TODO - appliquer resources/init.sql avec psql"
+        run: psql -h localhost -U donjons -d guilde -f resources/init.sql
 
       # --- 7. Compiler le projet -------------------------------------
       - name: Build
-        # TODO : compiler avec Maven
-        #        [ mvn -B clean compile ]
-        run: echo "TODO - compiler le projet"
+        run: mvn -B clean compile
 
       # --- 8. Lancer les tests ---------------------------------------
       - name: Tests
-        # TODO : lancer les tests avec Maven
-        #        [ mvn -B test ]
-        run: echo "TODO - lancer les tests"
+        run: mvn -B test
 
 # =====================================================================
 #  Pour aller plus loin (bonnes pratiques attendues) :
